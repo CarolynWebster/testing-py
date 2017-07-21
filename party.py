@@ -31,6 +31,9 @@ def is_mel(name, email):
         >>> is_mel('Mel', '')
         True
 
+        >>> is_mel('meL MeLiTpOlSkI', '')
+        True
+
     """
     name = name.lower()    
     names = name.split(" ")
@@ -56,7 +59,7 @@ def is_mel(name, email):
 
 
 def most_and_least_common_type(treats):
-    """Given list of treats, return most and least common treat types.
+    """Given list of treats, return lists of most and least common treat types.
 
     Return most and least common treat types in tuple of format (most, least).
 
@@ -72,7 +75,7 @@ def most_and_least_common_type(treats):
         ... ]
 
         >>> most_and_least_common_type(treats)
-        ('drink', 'dessert')
+        (['drink'], ['dessert'])
 
         >>> treats = [
         ...     {'type': 'drink'},
@@ -83,10 +86,9 @@ def most_and_least_common_type(treats):
         ...     {'type': 'appetizer'},
         ...     {'type': 'dessert'},
         ... ]
-
-        >>> answer = most_and_least_common_type(treats)
-        >>> answer in [('drink', 'dessert'), ('drink', 'appetizer')]
-        True
+        >>> most_and_least_common_type(treats)
+        (['drink'], ['appetizer', 'dessert'])
+        
 
         >>> treats = [
         ...     {'type': 'drink'},
@@ -99,7 +101,7 @@ def most_and_least_common_type(treats):
         ... ]
 
         >>> most_and_least_common_type(treats)
-        ('drink', 'drink')
+        (['drink'], ['drink'])
 
     """
 
@@ -109,19 +111,29 @@ def most_and_least_common_type(treats):
     for treat in treats:
         types[treat['type']] = types.get(treat['type'], 0) + 1
 
-    most_count = most_type = None
-    least_count = least_type = None
+    most_type = []
+    least_type = []
 
-    # Find most, least common
-    for treat_type, count in types.items():
-        if most_count is None or count > most_count:
-            most_count = count
-            most_type = treat_type
+    #convert dict of treats into list and sort on count
+    all_foods = list(types.items())
+    all_foods.sort(cmp = lambda x,y: cmp(x[1],y[1]), reverse = True)
 
-        if least_count is None or count < least_count:
-            least_count = count
-            least_type = treat_type
+    #loop through sorted list and include all of the highest counts that match
+    for i in range(len(all_foods)):
+        if all_foods[i][1] == all_foods[0][1]:
+            most_type.append(all_foods[i][0])
+        else:
+            break
 
+    # loop through sorted list backwards and 
+    # include all of the lowest counts that match
+    for k in range(len(all_foods)-1, -1, -1):
+        if all_foods[k][1] == all_foods[-1][1]:
+            least_type.append(all_foods[k][0])
+        else:
+            break
+
+    #returns list of most common and least common treats
     return (most_type, least_type)
 
 
